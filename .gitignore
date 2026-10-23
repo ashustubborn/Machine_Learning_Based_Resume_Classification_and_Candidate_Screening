@@ -1,0 +1,12 @@
+history.db
+__pycache__/
+*.pyc
+venv/
+.venv/
+env/
+.env
+.vscode/
+.idea/
+.DS_Store
+# optional: generated model files
+# model/*.pkl

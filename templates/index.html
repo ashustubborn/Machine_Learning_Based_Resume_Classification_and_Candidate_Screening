@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screening Desk — AI Resume Screening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="masthead-left">
+      <span class="mark">SD</span>
+      <div>
+        <h1>Screening Desk</h1>
+        <p class="tagline">Classify resumes, extract skills, score fit against a role — all on your own machine.</p>
+      </div>
+    </div>
+    <div class="masthead-right">
+      <span class="pill">{{ categories|length }} trained categories</span>
+    </div>
+  </header>
+
+  <main class="desk">
+
+    <section class="panel intake" id="intake">
+      <h2>1. Drop one or more resumes</h2>
+      <form id="analyzeForm">
+        <label class="dropzone" id="dropzone" for="resumeFile">
+          <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" multiple hidden>
+          <span class="dz-title">Click to add resumes</span>
+          <span class="dz-sub">Hold Ctrl or Shift to pick many, or drag files in. Every pick is added to the list (max 25).</span>
+        </label>
+        <div class="file-tools">
+          <button type="button" class="btn-link view" id="folderBtn">Add a whole folder</button>
+          <button type="button" class="btn-link danger hidden" id="clearFilesBtn">Clear list</button>
+          <input type="file" id="folderInput" webkitdirectory multiple hidden>
+        </div>
+        <p class="file-count" id="fileCount"></p>
+        <ul class="file-list" id="fileList"></ul>
+
+        <label class="field-label" for="jobDescription">2. Paste the job description <span class="optional">(optional — ranks candidates by fit)</span></label>
+        <textarea id="jobDescription" name="job_description" rows="6"
+          placeholder="Paste the role's requirements here to rank uploaded resumes by skill-match score..."></textarea>
+
+        <button type="submit" id="analyzeBtn" class="btn-primary">Screen resumes</button>
+        <p class="error" id="errorMsg"></p>
+      </form>
+
+      <div class="categories-list">
+        <span class="field-label">Trained job categories</span>
+        <div class="chip-row">
+          {% for c in categories %}
+          <span class="chip">{{ c }}</span>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <section class="panel results" id="results">
+
+      <div class="tabs">
+        <button type="button" class="tab active" data-tab="resultsTab">Results</button>
+        <button type="button" class="tab" data-tab="historyTab">History <span class="tab-count" id="historyCount"></span></button>
+      </div>
+
+      <div class="tab-pane" id="resultsTab">
+        <div class="empty-state" id="emptyState">
+          <h2>Findings will appear here</h2>
+          <p>Upload one or more resumes on the left to get each one's predicted job category, extracted skills, and — if you supply a job description — a ranked fit score.</p>
+        </div>
+
+        <div class="loading-state hidden" id="loadingState">
+          <div class="spinner"></div>
+          <p>Reading and classifying resumes…</p>
+        </div>
+
+        <div class="result-content hidden" id="resultContent">
+          <div class="batch-summary" id="batchSummary"></div>
+          <div class="failed-list hidden" id="failedList"></div>
+          <div class="candidate-list" id="candidateList"></div>
+        </div>
+      </div>
+
+      <div class="tab-pane hidden" id="historyTab">
+        <div class="history-head">
+          <h2>Previous screenings</h2>
+          <button type="button" class="btn-link danger hidden" id="clearHistoryBtn">Clear all</button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    <p>Runs entirely on your machine — TF-IDF + Logistic Regression classifier, no external API calls.</p>
+  </footer>
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
